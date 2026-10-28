@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>HireFlow AI | Recruitment Workspace</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-shell">
+
+        <!-- LEFT SIDEBAR -->
+        <aside class="sidebar">
+            <a href="/" class="brand">
+                <span class="brand-mark">H</span>
+                <span>hireflow<span class="brand-ai">.ai</span></span>
+            </a>
+
+            <div class="workspace-label">WORKSPACE</div>
+
+            <nav class="nav-links">
+                <a href="#overview" class="nav-link active">
+                    <span class="nav-icon">▦</span> Overview
+                </a>
+                <a href="#jobs" class="nav-link">
+                    <span class="nav-icon">▤</span> Job Openings
+                </a>
+                <a href="#apply" class="nav-link">
+                    <span class="nav-icon">＋</span> Applications
+                </a>
+                <a href="#candidates" class="nav-link">
+                    <span class="nav-icon">♙</span> Candidates
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="ai-status">
+                    <span class="status-dot"></span>
+                    <div>
+                        <strong>Workflow Engine</strong>
+                        <small>LangGraph connected</small>
+                    </div>
+                </div>
+
+                <div class="profile">
+                    <div class="avatar">HR</div>
+                    <div>
+                        <strong>HR Workspace</strong>
+                        <small>Recruitment team</small>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <header class="topbar">
+                <div>
+                    <div class="breadcrumb">Workspace <span>/</span> Overview</div>
+                    <h1>Recruitment overview</h1>
+                    <p class="page-subtitle">
+                        Manage your hiring pipeline from one workspace.
+                    </p>
+                </div>
+
+                <a href="#jobs" class="top-action">＋ Create a job</a>
+            </header>
+
+            <!-- HERO -->
+            <section class="hero" id="overview">
+                <div class="hero-content">
+                    <div class="eyebrow">
+                        <span class="sparkle">✦</span> AI-POWERED RECRUITMENT
+                    </div>
+
+                    <h2>Build your team.<br>
+                        <span>Find your next great hire.</span>
+                    </h2>
+
+                    <p>
+                        Manage job openings, review candidate skills and
+                        coordinate your hiring workflow with LangGraph.
+                    </p>
+
+                    <a href="#candidates" class="hero-button">
+                        Review candidates <span>→</span>
+                    </a>
+                </div>
+
+                <div class="hero-graphic" aria-hidden="true">
+                    <div class="orbit orbit-one"></div>
+                    <div class="orbit orbit-two"></div>
+                    <div class="hero-core">H<span>AI</span></div>
+                    <div class="float-card float-top">
+                        <span class="mini-icon">✦</span>
+                        <div><strong>Resume analysis</strong><small>Workflow ready</small></div>
+                    </div>
+                    <div class="float-card float-bottom">
+                        <span class="mini-check">✓</span>
+                        <div><strong>Human review</strong><small>HR stays in control</small></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ANALYTICS -->
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Total job openings</span>
+                        <span class="stat-icon purple">▤</span>
+                    </div>
+                    <div class="stat-number">{{ jobs|length }}</div>
+                    <div class="stat-foot">Jobs in this session</div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Total applications</span>
+                        <span class="stat-icon blue">♙</span>
+                    </div>
+                    <div class="stat-number">{{ applications|length }}</div>
+                    <div class="stat-foot">Applications received</div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Awaiting review</span>
+                        <span class="stat-icon amber">◷</span>
+                    </div>
+                    <div class="stat-number">
+                        {% set pending = namespace(count=0) %}
+                        {% for c in applications %}
+                        {% if c.status == "Pending HR Review" %}
+                        {% set pending.count = pending.count + 1 %}
+                        {% endif %}
+                        {% endfor %}
+                        {{ pending.count }}
+                    </div>
+                    <div class="stat-foot">Require HR attention</div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Interview approved</span>
+                        <span class="stat-icon green">✓</span>
+                    </div>
+                    <div class="stat-number">
+                        {% set approved = namespace(count=0) %}
+                        {% for c in applications %}
+                        {% if c.status == "Interview Approved" %}
+                        {% set approved.count = approved.count + 1 %}
+                        {% endif %}
+                        {% endfor %}
+                        {{ approved.count }}
+                    </div>
+                    <div class="stat-foot">Approved for next stage</div>
+                </article>
+            </section>
+
+            <!-- JOB CREATION -->
+            <section class="panel" id="jobs">
+                <div class="section-heading">
+                    <div>
+                        <div class="section-kicker">HIRING SETUP</div>
+                        <h2>Create a job opening</h2>
+                        <p>Define the role and the skills you need.</p>
+                    </div>
+                    <span class="step-badge">STEP 01</span>
+                </div>
+
+                <form action="/jobs" method="post" class="form-grid">
+                    <div class="field full-width">
+                        <label for="job-title">Job title</label>
+                        <input id="job-title" name="title" placeholder="e.g. AI Engineer" required>
+                    </div>
+
+                    <div class="field full-width">
+                        <label for="job-description">Job description</label>
+                        <textarea id="job-description" name="description"
+                            placeholder="Describe responsibilities and requirements..." required></textarea>
+                    </div>
+
+                    <div class="field full-width">
+                        <label for="job-skills">Required skills</label>
+                        <input id="job-skills" name="skills" placeholder="Python, SQL, LangGraph, RAG" required>
+                        <small class="field-help">
+                            Separate each skill with a comma.
+                        </small>
+                    </div>
+
+                    <div class="form-footer full-width">
+                        <span class="secure-note">✦ Job-related criteria only</span>
+                        <button type="submit" class="primary-button">
+                            Publish job opening <span>→</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="existing-jobs">
+                    <div class="subheading">Current job openings</div>
+
+                    {% for job in jobs %}
+                    <article class="job-row">
+                        <div class="job-symbol">JD</div>
+                        <div class="job-details">
+                            <strong>{{ job.title }}</strong>
+                            <p>{{ job.description }}</p>
+                            <div class="skill-tags">
+                                {% for skill in job.skills %}
+                                <span>{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <span class="open-badge">Open</span>
+                    </article>
+                    {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">▤</div>
+                        <strong>No job openings yet</strong>
+                        <p>Create your first job using the form above.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- APPLICATION FORM -->
+            <section class="panel" id="apply">
+                <div class="section-heading">
+                    <div>
+                        <div class="section-kicker">CANDIDATE INTAKE</div>
+                        <h2>Submit an application</h2>
+                        <p>Provide candidate details and upload a resume PDF.</p>
+                    </div>
+                    <span class="step-badge">STEP 02</span>
+                </div>
+
+                {% if jobs %}
+                <form action="/apply" method="post" enctype="multipart/form-data" class="form-grid">
+
+                    <input type="hidden" name="job_id" value="{{ jobs[0].id }}">
+
+                    <div class="field">
+                        <label for="candidate-name">Full name</label>
+                        <input id="candidate-name" name="name" placeholder="Candidate full name" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="candidate-email">Email address</label>
+                        <input id="candidate-email" name="email" type="email" placeholder="name@example.com" required>
+                    </div>
+
+                    <div class="field full-width">
+                        <label for="candidate-resume">Resume PDF</label>
+                        <input id="candidate-resume" type="file" name="resume" accept=".pdf,application/pdf" required>
+                        <small class="field-help">
+                            Maximum file size: 5 MB. Text-based PDFs work best.
+                        </small>
+                    </div>
+
+                    <div class="form-footer full-width">
+                        <span class="secure-note">Resume data is used for this prototype's review workflow.</span>
+                        <button type="submit" class="primary-button">
+                            Process application <span>→</span>
+                        </button>
+                    </div>
+                </form>
+                {% else %}
+                <div class="empty-state">
+                    <strong>Create a job before accepting applications</strong>
+                    <p>The application form will appear once a job is available.</p>
+                    <a href="#jobs" class="text-link">Create a job →</a>
+                </div>
+                {% endif %}
+            </section>
+
+            <!-- CANDIDATE PIPELINE -->
+            <section class="panel" id="candidates">
+                <div class="section-heading">
+                    <div>
+                        <div class="section-kicker">TALENT PIPELINE</div>
+                        <h2>Candidate review</h2>
+                        <p>Review extracted skills and manage next steps.</p>
+                    </div>
+                    <span class="count-badge">{{ applications|length }} candidates</span>
+                </div>
+
+                {% for candidate in applications %}
+                <article class="candidate-card">
+                    <div class="candidate-header">
+                        <div class="candidate-identity">
+                            <div class="candidate-avatar">
+                                {{ candidate.name[:1]|upper }}
+                            </div>
+                            <div>
+                                <h3>{{ candidate.name }}</h3>
+                                <p>{{ candidate.email }}</p>
+                            </div>
+                        </div>
+
+                        <span class="status-pill
+                            {% if candidate.status == 'Pending HR Review' %}pending
+                            {% elif candidate.status == 'Interview Approved' %}approved
+                            {% else %}declined{% endif %}">
+                            {{ candidate.status }}
+                        </span>
+                    </div>
+
+                    <div class="candidate-role">
+                        <span>Applied for</span>
+                        <strong>{{ candidate.job_title }}</strong>
+                    </div>
+
+                    <div class="review-grid">
+                        <div class="review-box">
+                            <div class="review-label">SKILLS FOUND</div>
+                            <div class="skill-tags">
+                                {% for skill in candidate.matched_skills %}
+                                <span class="match-tag">{{ skill }}</span>
+                                {% else %}
+                                <span>No matching keywords found</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="review-box">
+                            <div class="review-label">NOT FOUND IN TEXT</div>
+                            <div class="skill-tags">
+                                {% for skill in candidate.missing_skills %}
+                                <span class="missing-tag">{{ skill }}</span>
+                                {% else %}
+                                <span>No missing keywords</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <details class="summary-details">
+                        <summary>View workflow review summary</summary>
+                        <pre>{{ candidate.review_summary }}</pre>
+                    </details>
+
+                    <div class="candidate-actions">
+                        {% if candidate.status == "Pending HR Review" %}
+                        <form action="/applications/{{ candidate.id }}/approve" method="post">
+                            <button type="submit" class="primary-button">
+                                Approve interview
+                            </button>
+                        </form>
+
+                        <form action="/applications/{{ candidate.id }}/decline" method="post">
+                            <button type="submit" class="secondary-button">
+                                Mark not proceeding
+                            </button>
+                        </form>
+                        {% else %}
+                        <span class="reviewed-note">
+                            ✓ Application reviewed
+                        </span>
+                        {% endif %}
+                    </div>
+                </article>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">♙</div>
+                    <strong>Your candidate pipeline is empty</strong>
+                    <p>Applications will appear here after submission.</p>
+                </div>
+                {% endfor %}
+            </section>
+
+            <footer class="page-footer">
+                <span>HireFlow AI · Recruitment workspace</span>
+                <span>LangGraph workflow · Human-led decisions</span>
+            </footer>
+        </main>
+    </div>
+</body>
+
+</html>
